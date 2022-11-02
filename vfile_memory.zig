@@ -14,19 +14,21 @@ pub const VFileMemory = struct {
 
     vfile: VFile,
 
+    const Self = @This();
+
     fn setUpFunctionTable() VFile {
         return comptime VFile{
             .fileType = MemoryType,
-            .closeFn = close,
-            .flushFn = flush,
-            .readFn = read,
-            .writeFn = write,
-            .seekFromStartFn = seekFromStart,
-            .seekFromCurrentFn = seekFromCurrent,
-            .seekFromEndFn = seekFromEnd,
-            .tellFn = tell,
-            .byteCountFn = byteCount,
-            .endOfFileFn = endOfFile,
+            .closeFn = closeFn,
+            .flushFn = flushFn,
+            .readFn = readFn,
+            .writeFn = writeFn,
+            .seekFromStartFn = seekFromStartFn,
+            .seekFromCurrentFn = seekFromCurrentFn,
+            .seekFromEndFn = seekFromEndFn,
+            .tellFn = tellFn,
+            .byteCountFn = byteCountFn,
+            .endOfFileFn = endOfFileFn,
         };
     }
 
@@ -67,17 +69,24 @@ pub const VFileMemory = struct {
         };
     }
 
-    fn close(vfile: *VFile) void {
+    fn closeFn(vfile: *VFile) void {
         assert(vfile.fileType == MemoryType);
         const self = @fieldParentPtr(VFileMemory, "vfile", vfile);
+        close(self);
+    }
+    pub fn close(self: *Self) void {
         if (self.allocator) |allocator| allocator.free(self.memory);
     }
 
-    fn flush(_: *VFile) anyerror!void {}
+    fn flushFn(_: *VFile) anyerror!void {}
+    pub fn flush(_: *Self) anyerror!void {}
 
-    fn read(vfile: *VFile, buffer: []u8) anyerror!usize {
+    fn readFn(vfile: *VFile, buffer: []u8) anyerror!usize {
         assert(vfile.fileType == MemoryType);
         const self = @fieldParentPtr(VFileMemory, "vfile", vfile);
+        return try read(self, buffer);
+    }
+    pub fn read(self: *Self, buffer: []u8) anyerror!usize {
         if (self.offset + buffer.len > self.memory.len) return VFileError.ReadError;
 
         const amount_to_read = @min(self.memory.len - self.offset, buffer.len);
@@ -86,14 +95,16 @@ pub const VFileMemory = struct {
         return amount_to_read;
     }
 
-    fn write(vfile: *VFile, buffer: []const u8) anyerror!usize {
+    fn writeFn(vfile: *VFile, buffer: []const u8) anyerror!usize {
         assert(vfile.fileType == MemoryType);
         const self = @fieldParentPtr(VFileMemory, "vfile", vfile);
-
+        return try write(self, buffer);
+    }
+    pub fn write(self: *Self, buffer: []const u8) anyerror!usize {
         // do we need to grow if so try it
         if (self.offset + buffer.len > self.memory.len) {
             if (self.allocator) |allocator| {
-                if(self.growable) self.memory = try allocator.realloc(self.memory, self.offset + buffer.len);
+                if (self.growable) self.memory = try allocator.realloc(self.memory, self.offset + buffer.len);
             }
         }
         // after possible growing do we have room?
@@ -105,35 +116,44 @@ pub const VFileMemory = struct {
         return amount_to_write;
     }
 
-    fn seekFromStart(vfile: *VFile, offset: u64) anyerror!void {
+    fn seekFromStartFn(vfile: *VFile, offset: u64) anyerror!void {
         assert(vfile.fileType == MemoryType);
         const self = @fieldParentPtr(VFileMemory, "vfile", vfile);
+        try seekFromStart(self, offset);
+    }
+    pub fn seekFromStart(self: *Self, offset: u64) anyerror!void {
         if (offset >= self.memory.len) return VFileError.SeekError;
         self.offset = offset;
     }
-    fn seekFromCurrent(vfile: *VFile, offset: i64) anyerror!void {
+
+    fn seekFromCurrentFn(vfile: *VFile, offset: i64) anyerror!void {
         assert(vfile.fileType == MemoryType);
         const self = @fieldParentPtr(VFileMemory, "vfile", vfile);
-
+        try seekFromCurrent(self, offset);
+    }
+    pub fn seekFromCurrent(self: *Self, offset: i64) anyerror!void {
         // we can't support the full offset range
-        if(offset < 0) {
-            const o = @truncate(u64, @intCast(u64,-offset));
-            if(o > self.offset) return VFileError.SeekError;
+        if (offset < 0) {
+            const o = @truncate(u64, @intCast(u64, -offset));
+            if (o > self.offset) return VFileError.SeekError;
             self.offset = self.offset - o;
         } else {
             const o = @truncate(u64, @intCast(u64, offset));
-            if(self.offset + o > self.memory.len) return VFileError.SeekError;
+            if (self.offset + o > self.memory.len) return VFileError.SeekError;
             self.offset = self.offset + o;
         }
     }
-    fn seekFromEnd(vfile: *VFile, offset: i64) anyerror!void {
+
+    fn seekFromEndFn(vfile: *VFile, offset: i64) anyerror!void {
         assert(vfile.fileType == MemoryType);
         const self = @fieldParentPtr(VFileMemory, "vfile", vfile);
-
+        try seekFromEnd(self, offset);
+    }
+    pub fn seekFromEnd(self: *Self, offset: i64) anyerror!void {
         // we can't support the full offset range
-        if(offset <= 0) {
-            const o = @truncate(u64, @intCast(u64,-offset));
-            if(o > self.memory.len) return VFileError.SeekError;
+        if (offset <= 0) {
+            const o = @truncate(u64, @intCast(u64, -offset));
+            if (o > self.memory.len) return VFileError.SeekError;
             self.offset = self.memory.len - o;
         } else {
             // technically posix allows to seek beyond the end of a file
@@ -142,21 +162,30 @@ pub const VFileMemory = struct {
         }
     }
 
-    fn tell(vfile: *VFile) anyerror!usize {
+    fn tellFn(vfile: *VFile) anyerror!usize {
         assert(vfile.fileType == MemoryType);
         const self = @fieldParentPtr(VFileMemory, "vfile", vfile);
+        return try tell(self);
+    }
+    pub fn tell(self: *Self) anyerror!usize {
         return self.offset;
     }
 
-    fn byteCount(vfile: *VFile) VFileError!usize {
+    fn byteCountFn(vfile: *VFile) VFileError!usize {
         assert(vfile.fileType == MemoryType);
         const self = @fieldParentPtr(VFileMemory, "vfile", vfile);
+        return try byteCount(self);
+    }
+    pub fn byteCount(self: *Self) VFileError!usize {
         return self.memory.len;
     }
 
-    fn endOfFile(vfile: *VFile) anyerror!bool {
+    fn endOfFileFn(vfile: *VFile) anyerror!bool {
         assert(vfile.fileType == MemoryType);
         const self = @fieldParentPtr(VFileMemory, "vfile", vfile);
+        return try endOfFile(self);
+    }
+    pub fn endOfFile(self: *Self) anyerror!bool {
         return self.offset >= self.memory.len - 1;
     }
 };
@@ -265,7 +294,7 @@ test "read vfile memory" {
     var v: *VFile = &(vfilemem).vfile;
     defer v.close();
     try expectEqual(try v.write(&fancy_array), 10);
-    try expectEqual(try v.seekFromStart(0), 0);
+    try v.seekFromStart(0);
 
     var read10: [10]u8 = undefined;
     try expectEqual(try v.read(&read10), 10);
@@ -284,7 +313,7 @@ test "growablility" {
     try expectEqual(v.byteCount(), 0);
     var buffer = [_]u8{ 0, 1, 2, 3 };
     try expectEqual(try v.write(&buffer), 4);
-    var dst_buffer = [_]u8 {0} ** 4;
+    var dst_buffer = [_]u8{0} ** 4;
     try expectError(VFileError.ReadError, v.read(&dst_buffer));
     try v.seekFromStart(0);
 
@@ -292,5 +321,4 @@ test "growablility" {
     for (dst_buffer) |value, i| {
         try expectEqual(buffer[i], value);
     }
-
 }
