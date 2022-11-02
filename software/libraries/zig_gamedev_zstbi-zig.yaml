@@ -1,0 +1,25 @@
+name: zig_gamedev_zstbi
+
+boards: 
+ - host
+
+cpus:
+ - host
+
+builder: 
+ - zig
+
+# libraries to be linked into this peice of software
+libraries: []
+
+# non library dependencies (like host programs, asset processing etc.)
+dependencies: [] 
+
+actions:
+ - fetch git git@github.com:michal-z/zig-gamedev.git main zig_gamedev
+
+zig:
+    library_import: libs/zig_gamedev/libs/zstbi/build.zig
+    library_package: 
+    library_link: 
+
