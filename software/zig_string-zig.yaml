@@ -1,0 +1,24 @@
+name: zig_string
+
+boards: 
+ - host
+
+cpus:
+ - host
+
+builder: 
+ - zig
+
+# libraries to be linked into this peice of software
+libraries: []
+
+# non library dependencies (like host programs, asset processing etc.)
+dependencies: [] 
+
+actions:
+ - fetch git git@github.com:JakubSzark/zig-string.git master
+
+zig:
+    library_import: libs/${lib_name}/zig-string.zig
+    library_package: 
+    library_link: 

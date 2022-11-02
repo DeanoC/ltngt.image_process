@@ -1,0 +1,21 @@
+name: vfile
+
+boards: 
+ - host
+
+cpus:
+ - host
+
+builder: 
+ - zig
+
+# libraries to be linked into this peice of software
+libraries: []
+
+# non library dependencies (like programs, asset processing etc.)
+dependencies: [] 
+
+actions:
+ - fetch git git@github.com:DeanoC/ltngt.vfile.git main
+
+zig:
