@@ -21,5 +21,6 @@ actions:
 zig:
     library_import: libs/zig_gamedev/libs/zgui/build.zig
     library_package: 
-    library_link: 
-
+    library_link: |4
+        const zgui = @import("ibs/zig_gamedev/libs/zgui/build.zig");
+        zgui.link(executable, false);
