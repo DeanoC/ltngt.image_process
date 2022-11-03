@@ -16,7 +16,7 @@ libraries: []
 dependencies: [] 
 
 actions:
- - fetch git git@github.com:michal-z/zig-gamedev.git main zig_gamedev
+ - fetch git git@github.com:DeanoC/zig-gamedev.git main zig_gamedev
 
 zig:
     library_import: libs/zig_gamedev/libs/ztracy/build.zig
