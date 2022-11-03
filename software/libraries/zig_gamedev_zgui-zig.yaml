@@ -19,7 +19,7 @@ actions:
  - fetch git git@github.com:DeanoC/zig-gamedev.git main zig_gamedev
 
 zig:
-    library_import: libs/zig_gamedev/libs/zgui/build.zig
+    library_import: libs/zig_gamedev/libs/zgui/src/main.zig
     library_package: 
     library_link: |4
         const zgui = @import("libs/zig_gamedev/libs/zgui/build.zig");
