@@ -23,4 +23,4 @@ zig:
     library_package: 
     library_link: |4
         const zgui = @import("libs/zig_gamedev/libs/zgui/build.zig");
-        zgui.link(executable, false);
+        zgui.linkNoBackend(executable);
