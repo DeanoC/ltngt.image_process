@@ -1071,7 +1071,6 @@ pub fn FormatToName(fmt: TinyImageFormat) []const u8 {
         .CLUT_P4A4 => return "CLUT_P4A4",
         .CLUT_P8 => return "CLUT_P8",
         .CLUT_P8A8 => return "CLUT_P8A8",
-        else => return ".UNDEFINED",
     }
 }
 
