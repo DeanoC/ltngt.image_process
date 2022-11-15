@@ -10,7 +10,8 @@ builder:
  - zig
 
 # libraries to be linked into this peice of software
-libraries: []
+libraries: 
+ - tiny_image_format
 
 # non library dependencies (like programs, asset processing etc.)
 dependencies: [] 
