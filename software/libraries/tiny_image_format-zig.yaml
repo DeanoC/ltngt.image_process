@@ -19,6 +19,3 @@ actions:
  - fetch git git@github.com:DeanoC/ltngt.tiny_image_format.git main
 
 zig:
-    library_import: libs/tiny_image_format/package.zig
-    library_package: 
-    library_link:
