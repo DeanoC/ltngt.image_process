@@ -39,19 +39,18 @@ pub const Config = struct {
     pub fn pixelCount(self: Config) u32 {
         return self.pixelCountPerSlice() * @as(u32, self.slices);
     }
-
-    pub fn indexOf(self: Config, x: u32, y: u32, z: u16, slice: u16) usize {
-        assert(x < self.width);
-        assert(y < self.height);
-        assert(z < self.depth);
-        assert(slice < self.slices);
-        return (slice * self.pixelCountPerSlice()) +
-            (z * self.pixelCountPerPage()) +
-            (y * self.pixelCountPerRow()) +
-            x;
+    pub fn indexOf(self: Config, address: struct { x: u32, y: u32 = 0, z: u16 = 0, slice: u16 = 0 }) usize {
+        assert(address.x < self.width);
+        assert(address.y < self.height);
+        assert(address.z < self.depth);
+        assert(address.slice < self.slices);
+        return (address.slice * self.pixelCountPerSlice()) +
+            (address.z * self.pixelCountPerPage()) +
+            (address.y * self.pixelCountPerRow()) +
+            address.x;
     }
-    pub fn byteOffsetOf(self: Config, x: u32, y: u32, z: u16, slice: u16) usize {
-        return (indexOf(self, x, y, z, slice) * tif.Block.ByteSize(self.format)) / tif.Block.PixelCount(self.format);
+    pub fn byteOffsetOf(self: Config, address: struct { x: u32, y: u32 = 0, z: u16 = 0, slice: u16 = 0 }) usize {
+        return (indexOf(self, address) * tif.Block.ByteSize(self.format)) / tif.Block.PixelCount(self.format);
     }
 };
 
