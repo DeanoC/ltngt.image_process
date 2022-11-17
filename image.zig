@@ -95,20 +95,24 @@ pub const Image = struct {
         std.mem.set(u8, self.data(u8), 0);
     }
 
-    pub fn DecodePixelsAt(self: *Image, output: []@Vector(4, f32), offsetInPixels: usize) void {
+    pub fn decodePixelsAt(self: *Image, output: []@Vector(4, f32), offsetInPixels: usize) void {
         std.debug.assert(tif.Decode.CanDecodePixelsToF32(self.config.format));
         tif.Decode.DecodePixelsToF32(self.config.format, .{ .plane0 = dataAt(u8, offsetInPixels) }, output);
     }
 
-    pub fn EncodePixelsAt(self: *Image, input: []const @Vector(4, f32), offsetInPixels: usize) void {
+    pub fn encodePixelsAt(self: *Image, input: []const @Vector(4, f32), offsetInPixels: usize) void {
         std.debug.assert(tif.Decode.CanEncodePixelsToF32(self.config.format));
         tif.Encode.EncodePixelsToF32(self.config.format, input, .{ .plane0 = dataAt(u8, offsetInPixels) });
     }
 
-    pub fn GetPixelAt(self: *Image, offsetInPixels: usize) @Vector(4, f32) {
-        var result: [1]@Vector(4, f32) = .{@Vector(4, f32){ 2, 3, 4, 5 }};
+    pub fn getPixelAt(self: *Image, offsetInPixels: usize) @Vector(4, f32) {
+        var result: [1]@Vector(4, f32) = undefined;
         tif.Decode.DecodePixelsToF32(self.config.format, .{ .plane0 = self.dataAt(u8, offsetInPixels)[0..tif.Block.ByteSize(self.config.format)] }, &result);
         return result[0];
+    }
+    pub fn setPixelAt(self: *Image, input: @Vector(4, f32), offsetInPixels: usize) void {
+        var in: [1]@Vector(4, f32) = .{input};
+        tif.Encode.EncodePixelsToF32(self.config.format, &in, .{ .plane0 = self.dataAt(u8, offsetInPixels)[0..tif.Block.ByteSize(self.config.format)] });
     }
 
     pub fn dataSizeInBytes(self: *Image) usize {
