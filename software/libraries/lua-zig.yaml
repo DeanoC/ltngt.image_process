@@ -24,5 +24,5 @@ zig:
     library_package: 
     library_link: |4
         const luaLib = @import("libs/${lib_name}/src/sokol/build.zig");
-        luaLib.addLuaLib(executable,"libs/${lib_name}")
+        luaLib.addLuaLib(executable,"libs/${lib_name}");
 
