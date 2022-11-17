@@ -20,7 +20,7 @@ actions:
  - fetch git git@github.com:DeanoC/zoltan.git main
 
 zig:
-    library_import: libs/${lib_name}/src/sokol/lua.zig
+    library_import: libs/${lib_name}/src/lua.zig
     library_package: 
     library_link: |4
         const luaLib = @import("libs/${lib_name}/build.zig");
