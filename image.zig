@@ -31,13 +31,13 @@ pub const Config = struct {
         return self.width;
     }
     pub fn pixelCountPerPage(self: Config) u32 {
-        return pixelCountPerRow * self.height;
+        return self.pixelCountPerRow() * self.height;
     }
     pub fn pixelCountPerSlice(self: Config) u32 {
-        return pixelCountPerPage * self.depth;
+        return self.pixelCountPerPage() * @as(u32, self.depth);
     }
     pub fn pixelCount(self: Config) u32 {
-        return pixelCountPerSlice * self.slices;
+        return self.pixelCountPerSlice() * @as(u32, self.slices);
     }
 
     pub fn indexOf(self: Config, x: u32, y: u32, z: u16, slice: u16) usize {
@@ -69,12 +69,17 @@ pub const Image = struct {
         allocator.destroy(self);
     }
 
-    pub fn data(self: *Image, comptime T: type) []T {
-        const image_start = @ptrCast([*]u8, self) + @sizeOf(Image);
+    pub fn dataAt(self: *Image, comptime T: type, offsetInPixels: usize) []T {
+        const offSetInBytes = offsetInPixels * tif.Block.ByteSize(self.config.format);
+        const image_start = @ptrCast([*]u8, self) + @sizeOf(Image) + offSetInBytes;
         var ret: []T = undefined;
         ret.ptr = @ptrCast([*]T, @alignCast(@alignOf(T), image_start));
-        ret.len = self.config.calculateDataSize() / @sizeOf(T);
+        ret.len = (self.config.calculateDataSize() + offSetInBytes) / @sizeOf(T);
         return ret;
+    }
+
+    pub fn data(self: *Image, comptime T: type) []T {
+        return dataAt(self, T, 0);
     }
 
     pub fn next(self: *Image) ?*Image {
@@ -90,6 +95,36 @@ pub const Image = struct {
         std.mem.set(u8, self.data(u8), 0);
     }
 
+    pub fn DecodePixelsAt(self: *Image, output: []@Vector(4, f32), offsetInPixels: usize) void {
+        std.debug.assert(tif.Decode.CanDecodePixelsToF32(self.config.format));
+        tif.Decode.DecodePixelsToF32(self.config.format, .{ .plane0 = dataAt(u8, offsetInPixels) }, output);
+    }
+
+    pub fn EncodePixelsAt(self: *Image, input: []const @Vector(4, f32), offsetInPixels: usize) void {
+        std.debug.assert(tif.Decode.CanEncodePixelsToF32(self.config.format));
+        tif.Encode.EncodePixelsToF32(self.config.format, input, .{ .plane0 = dataAt(u8, offsetInPixels) });
+    }
+
+    pub fn GetPixelAt(self: *Image, offsetInPixels: usize) @Vector(4, f32) {
+        var result: [1]@Vector(4, f32) = .{@Vector(4, f32){ 2, 3, 4, 5 }};
+        tif.Decode.DecodePixelsToF32(self.config.format, .{ .plane0 = self.dataAt(u8, offsetInPixels)[0..tif.Block.ByteSize(self.config.format)] }, &result);
+        return result[0];
+    }
+
+    pub fn dataSizeInBytes(self: *Image) usize {
+        return self.config.calculateDataSize();
+    }
+
+    pub fn imageChainLength(self: *Image) usize {
+        var len: usize = 0;
+        var img: ?*Image = self;
+        while (img) |image| {
+            len += 1;
+            img = image.next();
+        }
+        return len;
+    }
+
     // total size including header and any joined images
     pub fn totalSize(self: *Image) usize {
         var total: usize = 0;
@@ -101,6 +136,7 @@ pub const Image = struct {
         // if not more next images round up to 8 and return
         return (total + 7) & ~@as(usize, 7);
     }
+
     // size of this image only (without any following in the chain)
     pub fn sizeInBytes(self: *Image) usize {
         return @sizeOf(Image) + self.config.calculateDataSize();
