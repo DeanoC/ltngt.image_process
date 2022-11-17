@@ -141,6 +141,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R1_UNORM => {
             const format = packed struct { red0: u1, red1: u1, red2: u1, red3: u1, red4: u1, red5: u1, red6: u1, red7: u1 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/8)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 8; di +=1;}) {
@@ -150,6 +151,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R2_UNORM => {
             const format = packed struct { red0: u2, red1: u2, red2: u2, red3: u2 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/4)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 4; di +=1;}) {
@@ -159,6 +161,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R4_UNORM => {
             const format = packed struct { red0: u4, red1: u4 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/2)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 2; di +=1;}) {
@@ -168,6 +171,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R4G4_UNORM => {
             const format = packed struct { red0: u4, green0: u4 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -177,6 +181,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .G4R4_UNORM => {
             const format = packed struct { green0: u4, red0: u4 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -186,6 +191,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A8_UNORM => {
             const format = packed struct { alpha0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -195,6 +201,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8_UNORM => {
             const format = packed struct { red0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -204,6 +211,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8_SNORM => {
             const format = packed struct { red0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -213,6 +221,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8_UINT => {
             const format = packed struct { red0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -222,6 +231,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8_SINT => {
             const format = packed struct { red0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -231,6 +241,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8_SRGB => {
             const format = packed struct { red0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -240,6 +251,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B2G3R3_UNORM => {
             const format = packed struct { blue0: u2, green0: u3, red0: u3 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -249,6 +261,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R4G4B4A4_UNORM => {
             const format = packed struct { red0: u4, green0: u4, blue0: u4, alpha0: u4 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -258,6 +271,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R4G4B4X4_UNORM => {
             const format = packed struct { red0: u4, green0: u4, blue0: u4 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -267,6 +281,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B4G4R4A4_UNORM => {
             const format = packed struct { blue0: u4, green0: u4, red0: u4, alpha0: u4 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -276,6 +291,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B4G4R4X4_UNORM => {
             const format = packed struct { blue0: u4, green0: u4, red0: u4 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -285,6 +301,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A4R4G4B4_UNORM => {
             const format = packed struct { alpha0: u4, red0: u4, green0: u4, blue0: u4 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -294,6 +311,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .X4R4G4B4_UNORM => {
             const format = packed struct { red0: u4, green0: u4, blue0: u4 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -303,6 +321,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A4B4G4R4_UNORM => {
             const format = packed struct { alpha0: u4, blue0: u4, green0: u4, red0: u4 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -312,6 +331,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .X4B4G4R4_UNORM => {
             const format = packed struct { blue0: u4, green0: u4, red0: u4 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -321,6 +341,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R5G6B5_UNORM => {
             const format = packed struct { red0: u5, green0: u6, blue0: u5 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -330,6 +351,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B5G6R5_UNORM => {
             const format = packed struct { blue0: u5, green0: u6, red0: u5 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -339,6 +361,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R5G5B5A1_UNORM => {
             const format = packed struct { red0: u5, green0: u5, blue0: u5, alpha0: u1 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -348,6 +371,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B5G5R5A1_UNORM => {
             const format = packed struct { blue0: u5, green0: u5, red0: u5, alpha0: u1 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -357,6 +381,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A1R5G5B5_UNORM => {
             const format = packed struct { alpha0: u1, red0: u5, green0: u5, blue0: u5 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -366,6 +391,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A1B5G5R5_UNORM => {
             const format = packed struct { alpha0: u1, blue0: u5, green0: u5, red0: u5 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -375,6 +401,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R5G5B5X1_UNORM => {
             const format = packed struct { red0: u5, green0: u5, blue0: u5 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -384,6 +411,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B5G5R5X1_UNORM => {
             const format = packed struct { blue0: u5, green0: u5, red0: u5 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -393,6 +421,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .X1R5G5B5_UNORM => {
             const format = packed struct { red0: u5, green0: u5, blue0: u5 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -402,6 +431,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .X1B5G5R5_UNORM => {
             const format = packed struct { blue0: u5, green0: u5, red0: u5 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -411,6 +441,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B2G3R3A8_UNORM => {
             const format = packed struct { blue0: u2, green0: u3, red0: u2, alpha0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -420,6 +451,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8_UNORM => {
             const format = packed struct { red0: u8, green0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -429,6 +461,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8_SNORM => {
             const format = packed struct { red0: i8, green0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -438,6 +471,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .G8R8_UNORM => {
             const format = packed struct { green0: u8, red0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -447,6 +481,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .G8R8_SNORM => {
             const format = packed struct { green0: i8, red0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -456,6 +491,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8_UINT => {
             const format = packed struct { red0: u8, green0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -465,6 +501,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8_SINT => {
             const format = packed struct { red0: i8, green0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -474,6 +511,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8_SRGB => {
             const format = packed struct { red0: u8, green0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -483,6 +521,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16_UNORM => {
             const format = packed struct { red0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -492,6 +531,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16_SNORM => {
             const format = packed struct { red0: i16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -501,6 +541,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16_UINT => {
             const format = packed struct { red0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -510,6 +551,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16_SINT => {
             const format = packed struct { red0: i16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -519,6 +561,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16_SFLOAT => {
             const format = packed struct { red0: f16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -528,6 +571,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16_SBFLOAT => {
             const format = packed struct { red0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -537,6 +581,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8B8_UNORM => {
             const format = packed struct { red0: u8, green0: u8, blue0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -546,6 +591,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8B8_SNORM => {
             const format = packed struct { red0: i8, green0: i8, blue0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -555,6 +601,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8B8_UINT => {
             const format = packed struct { red0: u8, green0: u8, blue0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -564,6 +611,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8B8_SINT => {
             const format = packed struct { red0: i8, green0: i8, blue0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -573,6 +621,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8B8_SRGB => {
             const format = packed struct { red0: u8, green0: u8, blue0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -582,6 +631,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B8G8R8_UNORM => {
             const format = packed struct { blue0: u8, green0: u8, red0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -591,6 +641,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B8G8R8_SNORM => {
             const format = packed struct { blue0: i8, green0: i8, red0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -600,6 +651,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B8G8R8_UINT => {
             const format = packed struct { blue0: u8, green0: u8, red0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -609,6 +661,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B8G8R8_SINT => {
             const format = packed struct { blue0: i8, green0: i8, red0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -618,6 +671,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B8G8R8_SRGB => {
             const format = packed struct { blue0: u8, green0: u8, red0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -627,6 +681,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8B8A8_UNORM => {
             const format = packed struct { red0: u8, green0: u8, blue0: u8, alpha0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -636,6 +691,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8B8A8_SNORM => {
             const format = packed struct { red0: i8, green0: i8, blue0: i8, alpha0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -645,6 +701,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8B8A8_UINT => {
             const format = packed struct { red0: u8, green0: u8, blue0: u8, alpha0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -654,6 +711,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8B8A8_SINT => {
             const format = packed struct { red0: i8, green0: i8, blue0: i8, alpha0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -663,6 +721,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8B8A8_SRGB => {
             const format = packed struct { red0: u8, green0: u8, blue0: u8, alpha0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -672,6 +731,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B8G8R8A8_UNORM => {
             const format = packed struct { blue0: u8, green0: u8, red0: u8, alpha0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -681,6 +741,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B8G8R8A8_SNORM => {
             const format = packed struct { blue0: i8, green0: i8, red0: i8, alpha0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -690,6 +751,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B8G8R8A8_UINT => {
             const format = packed struct { blue0: u8, green0: u8, red0: u8, alpha0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -699,6 +761,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B8G8R8A8_SINT => {
             const format = packed struct { blue0: i8, green0: i8, red0: i8, alpha0: i8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -708,6 +771,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B8G8R8A8_SRGB => {
             const format = packed struct { blue0: u8, green0: u8, red0: u8, alpha0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -717,6 +781,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R8G8B8X8_UNORM => {
             const format = packed struct { red0: u8, green0: u8, blue0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -726,6 +791,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B8G8R8X8_UNORM => {
             const format = packed struct { blue0: u8, green0: u8, red0: u8 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -735,6 +801,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16_UNORM => {
             const format = packed struct { red0: u16, green0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -744,6 +811,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .G16R16_UNORM => {
             const format = packed struct { green0: u16, red0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -753,6 +821,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16_SNORM => {
             const format = packed struct { red0: i16, green0: i16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -762,6 +831,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .G16R16_SNORM => {
             const format = packed struct { green0: i16, red0: i16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -771,6 +841,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16_UINT => {
             const format = packed struct { red0: u16, green0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -780,6 +851,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16_SINT => {
             const format = packed struct { red0: i16, green0: i16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -789,6 +861,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16_SFLOAT => {
             const format = packed struct { red0: f16, green0: f16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -798,6 +871,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16_SBFLOAT => {
             const format = packed struct { red0: u16, green0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -807,6 +881,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32_UINT => {
             const format = packed struct { red0: u32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -816,6 +891,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32_SINT => {
             const format = packed struct { red0: i32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -825,6 +901,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32_SFLOAT => {
             const format = packed struct { red0: f32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -834,6 +911,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A2R10G10B10_UNORM => {
             const format = packed struct { alpha0: u2, red0: u10, green0: u10, blue0: u10 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -843,6 +921,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A2R10G10B10_SNORM => {
             const format = packed struct { alpha0: i2, red0: i10, green0: i10, blue0: i10 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -852,6 +931,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A2R10G10B10_UINT => {
             const format = packed struct { alpha0: u2, red0: u10, green0: u10, blue0: u10 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -861,6 +941,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A2R10G10B10_SINT => {
             const format = packed struct { alpha0: i2, red0: i10, green0: i10, blue0: i10 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -870,6 +951,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A2B10G10R10_UNORM => {
             const format = packed struct { alpha0: u2, blue0: u10, green0: u10, red0: u10 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -879,6 +961,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A2B10G10R10_SNORM => {
             const format = packed struct { alpha0: i2, blue0: i10, green0: i10, red0: i10 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -888,6 +971,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A2B10G10R10_UINT => {
             const format = packed struct { alpha0: u2, blue0: u10, green0: u10, red0: u10 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -897,6 +981,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .A2B10G10R10_SINT => {
             const format = packed struct { alpha0: i2, blue0: i10, green0: i10, red0: i10 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -906,6 +991,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R10G10B10A2_UNORM => {
             const format = packed struct { red0: u10, green0: u10, blue0: u10, alpha0: u2 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -915,6 +1001,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R10G10B10A2_SNORM => {
             const format = packed struct { red0: i10, green0: i10, blue0: i10, alpha0: i2 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -924,6 +1011,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R10G10B10A2_UINT => {
             const format = packed struct { red0: u10, green0: u10, blue0: u10, alpha0: u2 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -933,6 +1021,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R10G10B10A2_SINT => {
             const format = packed struct { red0: i10, green0: i10, blue0: i10, alpha0: i2 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -942,6 +1031,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B10G10R10A2_UNORM => {
             const format = packed struct { blue0: u10, green0: u10, red0: u10, alpha0: u2 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -951,6 +1041,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B10G10R10A2_SNORM => {
             const format = packed struct { blue0: i10, green0: i10, red0: i10, alpha0: i2 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -960,6 +1051,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B10G10R10A2_UINT => {
             const format = packed struct { blue0: u10, green0: u10, red0: u10, alpha0: u2 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -969,6 +1061,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .B10G10R10A2_SINT => {
             const format = packed struct { blue0: i10, green0: i10, red0: i10, alpha0: i2 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -978,6 +1071,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16_UNORM => {
             const format = packed struct { red0: u16, green0: u16, blue0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -987,6 +1081,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16_SNORM => {
             const format = packed struct { red0: i16, green0: i16, blue0: i16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -996,6 +1091,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16_UINT => {
             const format = packed struct { red0: u16, green0: u16, blue0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1005,6 +1101,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16_SINT => {
             const format = packed struct { red0: i16, green0: i16, blue0: i16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1014,6 +1111,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16_SFLOAT => {
             const format = packed struct { red0: f16, green0: f16, blue0: f16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1023,6 +1121,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16_SBFLOAT => {
             const format = packed struct { red0: u16, green0: u16, blue0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1032,6 +1131,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16A16_UNORM => {
             const format = packed struct { red0: u16, green0: u16, blue0: u16, alpha0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1041,6 +1141,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16A16_SNORM => {
             const format = packed struct { red0: i16, green0: i16, blue0: i16, alpha0: i16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1050,6 +1151,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16A16_UINT => {
             const format = packed struct { red0: u16, green0: u16, blue0: u16, alpha0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1059,6 +1161,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16A16_SINT => {
             const format = packed struct { red0: i16, green0: i16, blue0: i16, alpha0: i16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1068,6 +1171,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16A16_SFLOAT => {
             const format = packed struct { red0: f16, green0: f16, blue0: f16, alpha0: f16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1077,6 +1181,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R16G16B16A16_SBFLOAT => {
             const format = packed struct { red0: u16, green0: u16, blue0: u16, alpha0: u16 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1086,6 +1191,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32G32_UINT => {
             const format = packed struct { red0: u32, green0: u32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1095,6 +1201,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32G32_SINT => {
             const format = packed struct { red0: i32, green0: i32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1104,6 +1211,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32G32_SFLOAT => {
             const format = packed struct { red0: f32, green0: f32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1113,6 +1221,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32G32B32_UINT => {
             const format = packed struct { red0: u32, green0: u32, blue0: u32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1122,6 +1231,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32G32B32_SINT => {
             const format = packed struct { red0: i32, green0: i32, blue0: i32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1131,6 +1241,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32G32B32_SFLOAT => {
             const format = packed struct { red0: f32, green0: f32, blue0: f32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1140,6 +1251,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32G32B32A32_UINT => {
             const format = packed struct { red0: u32, green0: u32, blue0: u32, alpha0: u32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1149,6 +1261,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32G32B32A32_SINT => {
             const format = packed struct { red0: i32, green0: i32, blue0: i32, alpha0: i32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
@@ -1158,6 +1271,7 @@ pub fn EncodePixelsToF32(fmt: TinyImageFormat, input: []@Vector(4, f32), output:
         .R32G32B32A32_SFLOAT => {
             const format = packed struct { red0: f32, green0: f32, blue0: f32, alpha0: f32 };
             const dest = @ptrCast([*]const format, @alignCast(@alignOf(format), output.plane0))[0..(output.plane0.len/1)];
+            std.debug.assert(dest.len != 0);
             var si = 0;
             var di = 0;
             while(si < input.len) : ({si += 1; di +=1;}) {
