@@ -24,5 +24,5 @@ zig:
     library_package: 
     library_link: |4
         const luaLib = @import("libs/${lib_name}/build.zig");
-        luaLib.addLuaLibrary(executable,"/libs/${lib_name}");
+        luaLib.addLuaLibrary(executable,"libs/${lib_name}");
 
