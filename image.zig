@@ -1,5 +1,6 @@
 const std = @import("std");
 const tif = @import("tiny_image_format");
+const tiny_ktx = @import("tiny_ktx.zig");
 const assert = std.debug.assert;
 
 pub const UsageHint = enum(u8) {
@@ -62,6 +63,31 @@ pub const Image = struct {
         var image = @ptrCast(*Image, mem);
         image.config = config;
         return image;
+    }
+
+    fn readTest(userData: u64, buffer: []u8) anyerror!usize {
+        _ = userData;
+        _ = buffer;
+        return 0;
+    }
+    fn seekTest(userData: u64, offset: u64) anyerror!void {
+        _ = userData;
+        _ = offset;
+    }
+    fn tellTest(userData: u64) anyerror!usize {
+        _ = userData;
+        return 0;
+    }
+
+    const KtxLoader = tiny_ktx.Loader(u64, readTest, seekTest, tellTest);
+
+    pub fn fromKtx(allocator: std.mem.Allocator) !*Image {
+        var userData: u64 = 0;
+        var ktx = KtxLoader{ .userData = userData, .allocator = allocator };
+        try ktx.readHeader();
+        _ = try ktx.imageDataAt(0);
+
+        return Image.init(allocator, Config{ .width = 10 });
     }
 
     pub fn deinit(self: *Image, allocator: std.mem.Allocator) void {
