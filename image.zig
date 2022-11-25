@@ -13,8 +13,8 @@ pub const UsageHint = enum(u8) {
 
 pub const Flags = packed struct {
     cubemap: bool = false,
-    isClut: bool = false,
-    hasNextImageData: bool = false,
+    is_clut: bool = false,
+    has_next_image_data: bool = false,
 };
 
 pub const Config = struct {
@@ -84,14 +84,14 @@ pub const Image = struct {
     const KtxLoader = tiny_ktx.Loader(*vfile.VFile, vfileRead, vfileSeek, vfileTell);
 
     pub fn fromKtx(allocator: std.mem.Allocator, file: *vfile.VFile) !*Image {
-        var ktx = KtxLoader{ .userData = file, .allocator = allocator };
+        var ktx = KtxLoader{ .user_data = file, .allocator = allocator };
         defer ktx.deinit();
         try ktx.readHeader();
-        const w = ktx.header.pixelWidth;
+        const w = ktx.header.width;
         // ktx files can have 0 to indicate a dimension isn't used
-        const h = if (ktx.header.pixelHeight > 1) ktx.header.pixelHeight else 1;
-        const d = if (ktx.header.pixelDepth > 1) ktx.header.pixelDepth else 1;
-        const s = if (ktx.header.numberOfArrayElements > 1) ktx.header.numberOfArrayElements else 1;
+        const h = if (ktx.header.height > 1) ktx.header.height else 1;
+        const d = if (ktx.header.depth > 1) ktx.header.depth else 1;
+        const s = if (ktx.header.number_of_array_elements > 1) ktx.header.number_of_array_elements else 1;
         std.debug.assert(d < (1 << 16));
         std.debug.assert(s < (1 << 16));
 
