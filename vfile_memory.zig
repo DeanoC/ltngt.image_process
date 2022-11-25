@@ -32,6 +32,10 @@ pub const VFileMemory = struct {
         };
     }
 
+    pub fn asInterface(self: *Self) *VFile {
+        return &self.vfile;
+    }
+
     pub fn initFromBuffer(arg_buffer: []u8) !VFileMemory {
         return VFileMemory{
             .allocator = null,
