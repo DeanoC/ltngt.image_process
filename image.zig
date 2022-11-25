@@ -1,5 +1,6 @@
 const std = @import("std");
 const tif = @import("tiny_image_format");
+const vfile = @import("vfile");
 const tiny_ktx = @import("tiny_ktx.zig");
 const assert = std.debug.assert;
 
@@ -64,34 +65,48 @@ pub const Image = struct {
         image.config = config;
         return image;
     }
-
-    fn readTest(userData: u64, buffer: []u8) anyerror!usize {
-        _ = userData;
-        _ = buffer;
-        return 0;
-    }
-    fn seekTest(userData: u64, offset: u64) anyerror!void {
-        _ = userData;
-        _ = offset;
-    }
-    fn tellTest(userData: u64) anyerror!usize {
-        _ = userData;
-        return 0;
-    }
-
-    const KtxLoader = tiny_ktx.Loader(u64, readTest, seekTest, tellTest);
-
-    pub fn fromKtx(allocator: std.mem.Allocator) !*Image {
-        var userData: u64 = 0;
-        var ktx = KtxLoader{ .userData = userData, .allocator = allocator };
-        try ktx.readHeader();
-        _ = try ktx.imageDataAt(0);
-
-        return Image.init(allocator, Config{ .width = 10 });
-    }
-
     pub fn deinit(self: *Image, allocator: std.mem.Allocator) void {
-        allocator.destroy(self);
+        var slice: []u8 = undefined;
+        slice.ptr = @ptrCast([*]u8, self);
+        slice.len = @sizeOf(Image) + self.config.calculateDataSize();
+        allocator.free(slice);
+    }
+    fn vfileRead(self: *vfile.VFile, buffer: []u8) anyerror!usize {
+        return self.read(buffer);
+    }
+    fn vfileSeek(self: *vfile.VFile, offset: u64) anyerror!void {
+        return self.seekFromStart(offset);
+    }
+    fn vfileTell(self: *vfile.VFile) anyerror!usize {
+        return self.tell();
+    }
+
+    const KtxLoader = tiny_ktx.Loader(*vfile.VFile, vfileRead, vfileSeek, vfileTell);
+
+    pub fn fromKtx(allocator: std.mem.Allocator, file: *vfile.VFile) !*Image {
+        var ktx = KtxLoader{ .userData = file, .allocator = allocator };
+        defer ktx.deinit();
+        try ktx.readHeader();
+        const w = ktx.header.pixelWidth;
+        // ktx files can have 0 to indicate a dimension isn't used
+        const h = if (ktx.header.pixelHeight > 1) ktx.header.pixelHeight else 1;
+        const d = if (ktx.header.pixelDepth > 1) ktx.header.pixelDepth else 1;
+        const s = if (ktx.header.numberOfArrayElements > 1) ktx.header.numberOfArrayElements else 1;
+        std.debug.assert(d < (1 << 16));
+        std.debug.assert(s < (1 << 16));
+
+        var image = try Image.init(allocator, Config{
+            .width = w,
+            .height = h,
+            .depth = @intCast(u16, d),
+            .slices = @intCast(u16, s),
+            .format = ktx.getFormat(),
+        });
+
+        std.log.info("{any} {}", .{ image, image.config.calculateDataSize() });
+        std.mem.copy(u8, image.data(u8), try ktx.imageDataAt(0));
+
+        return image;
     }
 
     pub fn dataAt(self: *Image, comptime T: type, offsetInPixels: usize) []T {

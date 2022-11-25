@@ -1,4 +1,6 @@
 const std = @import("std");
+const gl = @import("tiny_ktx_gl.zig");
+const tif = @import("tiny_image_format");
 
 pub const KtxError = error{
     NotValidError,
@@ -9,11 +11,11 @@ pub const KtxError = error{
 const Header = struct {
     identifier: [12]u8,
     endianness: u32,
-    glType: u32,
+    glType: gl.Type,
     glTypeSize: u32,
-    glFormat: u32,
-    glInternalFormat: u32,
-    glBaseInternalFormat: u32,
+    glFormat: gl.GlFormat,
+    glInternalFormat: gl.IntFormat,
+    glBaseInternalFormat: gl.IntFormat,
     pixelWidth: u32,
     pixelHeight: u32,
     pixelDepth: u32,
@@ -27,7 +29,7 @@ const identifier = [12]u8{ 0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, 0xBB, 0x0D,
 pub fn Loader(comptime funcData: type, comptime readFn: fn (userData: funcData, buffer: []u8) anyerror!usize, comptime seekFn: fn (userData: funcData, offset: u64) anyerror!void, comptime tellFn: fn (userData: funcData) anyerror!usize) type {
     return struct {
         const Self = @This();
-        const MaxMipMapLevels = 16;
+        const MaxMipMapLevels = 4;
         // must be provided by callee
         userData: funcData,
         allocator: std.mem.Allocator,
@@ -38,15 +40,23 @@ pub fn Loader(comptime funcData: type, comptime readFn: fn (userData: funcData, 
         header: Header = undefined,
         headerValid: bool = false,
         sameEndian: bool = false,
+        format: tif.Format = .UNDEFINED,
         keyValueData: []u8 = undefined,
 
         // filled when mipmaps are read
         mipMapSizes: [MaxMipMapLevels]u32 = [_]u32{0} ** MaxMipMapLevels,
-        mipMaps: [MaxMipMapLevels]?[]u8 = undefined,
+        mipMaps: [MaxMipMapLevels]?[]u8 = [_]?[]u8{null} ** MaxMipMapLevels,
 
-        comptime read: fn (_: funcData, buffer: []u8) anyerror!usize = readFn,
-        comptime seek: fn (userData: funcData, offset: u64) anyerror!void = seekFn,
-        comptime tell: fn (userData: funcData) anyerror!usize = tellFn,
+        comptime read: fn (data: funcData, buffer: []u8) anyerror!usize = readFn,
+        comptime seek: fn (data: funcData, offset: u64) anyerror!void = seekFn,
+        comptime tell: fn (data: funcData) anyerror!usize = tellFn,
+
+        pub fn deinit(self: *Self) void {
+            self.allocator.free(self.keyValueData);
+            for (self.mipMaps) |level| {
+                if (level != null) self.allocator.free(level.?);
+            }
+        }
 
         pub fn readHeader(self: *Self) !void {
             const same_endian = 0x04030201;
@@ -73,7 +83,18 @@ pub fn Loader(comptime funcData: type, comptime readFn: fn (userData: funcData, 
             _ = try self.read(self.userData, self.keyValueData);
 
             self.firstImagePos = try self.tell(self.userData);
+            self.format = gl.FromGl(.{
+                .gltype = self.header.glType,
+                .format = self.header.glFormat,
+                .intformat = self.header.glInternalFormat,
+            });
+            std.log.info("{any}", .{self.format});
             self.headerValid = true;
+        }
+
+        pub fn getFormat(self: *Self) tif.Format {
+            std.debug.assert(self.headerValid);
+            return gl.FromGl(gl.Format{ .gltype = self.header.glType, .format = self.header.glFormat, .intformat = self.header.glInternalFormat });
         }
 
         pub fn is1D(self: *Self) bool {
@@ -104,33 +125,32 @@ pub fn Loader(comptime funcData: type, comptime readFn: fn (userData: funcData, 
             if (seekLast == false and self.mipMapSizes[mipMapLevel] != 0) return self.mipMapSizes[mipMapLevel];
 
             var currentOffset = self.firstImagePos;
-            var currentLevel:usize = 0;
+            var currentLevel: usize = 0;
 
             while (currentLevel <= mipMapLevel) : (currentLevel += 1) {
                 // if we have already read this level, update seek if seekLast is set
                 if (self.mipMapSizes[currentLevel] != 0) {
-                    if(seekLast and currentLevel == mipMapLevel) {
+                    if (seekLast and currentLevel == mipMapLevel) {
                         try self.seek(self.userData, currentOffset + @sizeOf(u32));
                     }
                 } else {
-                    var sz8 = [4]u8{0,0,0,0};
+                    var sz8 = [4]u8{ 0, 0, 0, 0 };
                     try self.seek(self.userData, currentOffset);
-                    if( try self.read(self.userData, &sz8) != 4) {
+                    if (try self.read(self.userData, &sz8) != 4) {
                         return KtxError.NotValidError;
                     }
                     var sz: u32 = @bitCast(u32, sz8);
 
                     // KTX v1 standard rounding rules
                     if (self.header.numberOfFaces == 6 and self.header.numberOfArrayElements == 0) {
-                        sz = ((sz + 3) & ~ @as(u32,0b11)) * 6; // face padding and 6 faces
+                        sz = ((sz + 3) & ~@as(u32, 0b11)) * 6; // face padding and 6 faces
                     }
-                    self.mipMaps[currentLevel] = null;
                     self.mipMapSizes[currentLevel] = sz;
                 }
                 // so in the really small print KTX v1 states GL_UNPACK_ALIGNMENT = 4
-                // which PVR Texture Tool and I both missed at first. 
+                // which PVR Texture Tool and I both missed at first.
                 // It means pad to 1, 2, 4, 8 so 3, 5, 6, 7 bytes sizes need rounding up!
-                currentOffset += (self.mipMapSizes[currentLevel] + @sizeOf(u32) + 3) & ~@as(u32,0b11); // size + mip padding
+                currentOffset += (self.mipMapSizes[currentLevel] + @sizeOf(u32) + 3) & ~@as(u32, 0b11); // size + mip padding
             }
             return self.mipMapSizes[mipMapLevel];
         }
@@ -140,17 +160,16 @@ pub fn Loader(comptime funcData: type, comptime readFn: fn (userData: funcData, 
         pub fn imageDataAt(self: *Self, mipMapLevel: u4) ![]u8 {
             std.debug.assert(self.headerValid);
             if (mipMapLevel >= self.header.numberOfMipmapLevels) return KtxError.MipMapError;
-            if(self.mipMaps[mipMapLevel] != null) return self.mipMaps[mipMapLevel].?;
+            if (self.mipMaps[mipMapLevel] != null) return self.mipMaps[mipMapLevel].?;
 
             const size = try self.internalImageSizeAt(mipMapLevel, true);
-            if(size == 0) return KtxError.MipMapError;
+            if (size == 0) return KtxError.MipMapError;
 
             self.mipMaps[mipMapLevel] = try self.allocator.alloc(u8, size);
             const bytesRead = try self.read(self.userData, self.mipMaps[mipMapLevel].?);
-            if(bytesRead != self.mipMapSizes[mipMapLevel]) return KtxError.MipMapError;
+            if (bytesRead != self.mipMapSizes[mipMapLevel]) return KtxError.MipMapError;
             return self.mipMaps[mipMapLevel].?;
         }
-
     };
 }
 
