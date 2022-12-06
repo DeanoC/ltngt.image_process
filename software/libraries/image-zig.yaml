@@ -21,3 +21,8 @@ actions:
  - fetch git git@github.com:DeanoC/ltngt.image.git main
 
 zig:
+  library_import: libs/${lib_name}/package.zig
+  library_package: 
+  library_link: |4
+    const image = @import("libs/${lib_name}/build.zig");
+    zgui.link(executable);
