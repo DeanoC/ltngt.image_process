@@ -16,7 +16,7 @@ libraries: []
 dependencies: [] 
 
 actions:
- - fetch git git@github.com:JakubSzark/zig-string.git master
+ - fetch git git@github.com:DeanoC/zig-string.git master
 
 zig:
     library_import: libs/${lib_name}/zig-string.zig
