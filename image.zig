@@ -3,11 +3,20 @@ const tif = @import("tiny_image_format");
 const vfile = @import("vfile");
 const tiny_ktx = @import("tiny_ktx.zig");
 const assert = std.debug.assert;
+const string = @import("zig_string");
 
-pub const UsageHint = enum(u8) {
+pub const UsageHint = enum(u4) {
     Generic,
     DiffuseColour,
     SpecularColour,
+    FinalColour,
+    _,
+};
+
+pub const LayerType = enum(u4) {
+    Generic,
+    Visual,
+    Gameplay,
     _,
 };
 
@@ -24,6 +33,7 @@ pub const Config = struct {
     slices: u16 = 1,
     format: tif.Format = .R8G8B8A8_UNORM,
     usage: UsageHint = .Generic,
+    layer_type: LayerType = .Generic,
     flags: Flags = .{},
 
     pub fn calculateDataSize(self: Config) usize {
@@ -103,10 +113,81 @@ pub const Image = struct {
             .format = ktx.getFormat(),
         });
 
-        std.log.info("{any} {}", .{ image, image.config.calculateDataSize() });
         std.mem.copy(u8, image.data(u8), try ktx.imageDataAt(0));
-
         return image;
+    }
+    const open_exr = @cImport({
+        @cInclude("./tinyexr.h");
+    });
+
+    pub const OpenExrError = error{
+        BadVersionError,
+        BadHeaderError,
+        BadImageError,
+    };
+
+    const PixelType = enum(u8) {
+        UINT = 0,
+        HALF = 1,
+        FLOAT = 2,
+    };
+
+    pub fn fromExr(allocator: std.mem.Allocator, file: *vfile.VFile) !*Image {
+        var err: [*c]u8 = undefined;
+
+        var version = std.mem.zeroes(open_exr.EXRVersion);
+        var header = std.mem.zeroes(open_exr.EXRHeader);
+        var image = std.mem.zeroes(open_exr.EXRImage);
+
+        try file.seekFromEnd(0);
+        const file_len = try file.tell();
+        var file_mem = try allocator.alloc(u8, file_len);
+        defer allocator.free(file_mem);
+
+        try file.seekFromStart(0);
+        _ = try file.read(file_mem);
+
+        if (open_exr.ParseEXRVersionFromMemory(@ptrCast([*c]open_exr.EXRVersion, &version), @ptrCast([*c]const u8, file_mem), file_len) != open_exr.TINYEXR_SUCCESS) {
+            return OpenExrError.BadVersionError;
+        }
+        if (open_exr.ParseEXRHeaderFromMemory(@ptrCast([*c]open_exr.EXRHeader, &header), &version, @ptrCast([*c]const u8, file_mem), file_len, &err) != open_exr.TINYEXR_SUCCESS) {
+            std.log.warn("{any}", .{err});
+            return OpenExrError.BadHeaderError;
+        }
+
+        if (open_exr.LoadEXRImageFromMemory(@ptrCast([*c]open_exr.EXRImage, &image), &header, @ptrCast([*c]const u8, file_mem), file_len, &err) != open_exr.TINYEXR_SUCCESS) {
+            std.log.warn("{any}", .{err});
+            return OpenExrError.BadImageError;
+        }
+        defer _ = open_exr.FreeEXRImage(@ptrCast([*c]open_exr.EXRImage, &image));
+
+        var stack_memory: [2048]u8 = undefined;
+        var buffer_allocator = std.heap.FixedBufferAllocator.init(&stack_memory);
+        var arena = std.heap.ArenaAllocator.init(buffer_allocator.allocator());
+        defer arena.deinit();
+
+        //var layers = std.StringArrayHashMap([]const u8).init(arena);
+        std.log.debug("EXR image: {any}", .{image});
+        {
+            var i: usize = 0;
+            while (i < header.num_channels) : (i = i + 1) {
+                const ch = header.channels[i];
+                var full_name = string.String.init(arena.allocator());
+                try full_name.concat(&ch.name);
+                defer full_name.deinit();
+
+                std.log.warn("channel {}: {s} format: {}", .{ i, full_name.str(), ch.pixel_type });
+            }
+        }
+
+        var img = try Image.init(allocator, Config{
+            .width = @intCast(u32, image.width),
+            .height = @intCast(u32, image.height),
+            .depth = 1,
+            .slices = 1,
+            .format = .R8G8B8A8_UNORM,
+        });
+        return img;
     }
 
     pub fn dataAt(self: *Image, comptime T: type, offsetInPixels: usize) []T {

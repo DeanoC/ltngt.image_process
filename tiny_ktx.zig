@@ -47,9 +47,9 @@ pub fn Loader(comptime func_data: type, comptime readFn: fn (user_data: func_dat
         mip_map_sizes: [MaxMipMapLevels]u32 = [_]u32{0} ** MaxMipMapLevels,
         mip_maps: [MaxMipMapLevels]?[]u8 = [_]?[]u8{null} ** MaxMipMapLevels,
 
-        comptime read: fn (data: func_data, buffer: []u8) anyerror!usize = readFn,
-        comptime seek: fn (data: func_data, offset: u64) anyerror!void = seekFn,
-        comptime tell: fn (data: func_data) anyerror!usize = tellFn,
+        comptime read: *const fn (data: func_data, buffer: []u8) anyerror!usize = readFn,
+        comptime seek: *const fn (data: func_data, offset: u64) anyerror!void = seekFn,
+        comptime tell: *const fn (data: func_data) anyerror!usize = tellFn,
 
         pub fn deinit(self: *Self) void {
             self.allocator.free(self.key_value_data);
