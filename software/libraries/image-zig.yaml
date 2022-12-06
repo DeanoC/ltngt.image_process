@@ -13,6 +13,7 @@ builder:
 libraries: 
  - tiny_image_format
  - vfile
+ - zig_string
  
 # non library dependencies (like programs, asset processing etc.)
 dependencies: [] 
@@ -24,5 +25,5 @@ zig:
   library_import: libs/${lib_name}/package.zig
   library_package: 
   library_link: |4
-      const image = @import("libs/${lib_name}/build.zig");
-      image.link(executable);
+        const image = @import("libs/${lib_name}/build.zig");
+        image.link(executable);
