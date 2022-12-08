@@ -1,0 +1,27 @@
+name: ziglua
+
+boards: 
+ - host
+
+cpus:
+ - host
+
+builder: 
+ - zig
+
+# libraries to be linked into this peice of software
+libraries: []
+
+# non library dependencies (like programs, asset processing etc.)
+dependencies: [] 
+
+actions:
+ - fetch git git@github.com:natecraddock/ziglua.git
+
+zig:
+    library_import: libs/${lib_name}/src/lua.zig
+    library_package: 
+    library_link: |4
+        const ziglua = @import("libs/${lib_name}/build.zig");
+        ziglua.link(builder, executable);
+
