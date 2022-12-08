@@ -16,7 +16,7 @@ libraries: []
 dependencies: [] 
 
 actions:
- - fetch git git@github.com:natecraddock/ziglua.git
+ - fetch git git@github.com:natecraddock/ziglua.git master
 
 zig:
     library_import: libs/${lib_name}/src/lua.zig
