@@ -25,23 +25,28 @@ fn hasPackageBeenAdded(name: []const u8) bool {
 
 // package double adding protector
 var packageAdded = [_]struct { name: []const u8, added: bool = false } {
-    .{ .name = "zig_string" },
-    .{ .name = "tiny_image_format" },
     .{ .name = "vfile" },
+    .{ .name = "zig_string" },
+    .{ .name = "ziglua" },
+    .{ .name = "tiny_image_format" },
     .{ .name = "image" },
 };
 // Package definitions
+const vfilePkg = std.build.Pkg{
+    .name = "vfile",
+    .source = .{ .path = sdkPath("libs/vfile/package.zig") }
+};
 const zig_stringPkg = std.build.Pkg{
     .name = "zig_string",
     .source = .{ .path = sdkPath("libs/zig_string/zig-string.zig") }
 };
+const zigluaPkg = std.build.Pkg{
+    .name = "ziglua",
+    .source = .{ .path = sdkPath("libs/ziglua/src/ziglua-5.1/lib.zig") }
+};
 const tiny_image_formatPkg = std.build.Pkg{
     .name = "tiny_image_format",
     .source = .{ .path = sdkPath("libs/tiny_image_format/package.zig") }
-};
-const vfilePkg = std.build.Pkg{
-    .name = "vfile",
-    .source = .{ .path = sdkPath("libs/vfile/package.zig") }
 };
 const imagePkg = std.build.Pkg{
     .name = "image",
@@ -57,16 +62,23 @@ const imagePkg = std.build.Pkg{
 const image_process = @import("image_process/ikuy_build.zig");
 
 // link functions
+pub fn vfileLink(_: *std.build.Builder, executable: *std.build.LibExeObjStep) void {
+    if(!hasPackageBeenAdded("vfile")) executable.addPackage(vfilePkg);
+}
+
 pub fn zig_stringLink(_: *std.build.Builder, executable: *std.build.LibExeObjStep) void {
     if(!hasPackageBeenAdded("zig_string")) executable.addPackage(zig_stringPkg);
 }
 
-pub fn tiny_image_formatLink(_: *std.build.Builder, executable: *std.build.LibExeObjStep) void {
-    if(!hasPackageBeenAdded("tiny_image_format")) executable.addPackage(tiny_image_formatPkg);
+pub fn zigluaLink(builder: *std.build.Builder, executable: *std.build.LibExeObjStep) void {
+    const ziglua = @import("libs/ziglua/build.zig");
+    _ = ziglua.linkAndPackage(builder, executable, .{.version = ziglua.LuaVersion.lua_51});
+
+    if(!hasPackageBeenAdded("ziglua")) executable.addPackage(zigluaPkg);
 }
 
-pub fn vfileLink(_: *std.build.Builder, executable: *std.build.LibExeObjStep) void {
-    if(!hasPackageBeenAdded("vfile")) executable.addPackage(vfilePkg);
+pub fn tiny_image_formatLink(_: *std.build.Builder, executable: *std.build.LibExeObjStep) void {
+    if(!hasPackageBeenAdded("tiny_image_format")) executable.addPackage(tiny_image_formatPkg);
 }
 
 pub fn imageLink(_: *std.build.Builder, executable: *std.build.LibExeObjStep) void {
@@ -82,9 +94,10 @@ pub fn imageLink(_: *std.build.Builder, executable: *std.build.LibExeObjStep) vo
 // The actual build function
   pub fn build(builder: *std.build.Builder) !void {
     const image_process_exe = try image_process.build(builder);
-    zig_stringLink(builder, image_process_exe);
-    tiny_image_formatLink(builder, image_process_exe);
     vfileLink(builder, image_process_exe);
+    zig_stringLink(builder, image_process_exe);
+    zigluaLink(builder, image_process_exe);
+    tiny_image_formatLink(builder, image_process_exe);
     imageLink(builder, image_process_exe);
     image_process_exe.install();
 }
