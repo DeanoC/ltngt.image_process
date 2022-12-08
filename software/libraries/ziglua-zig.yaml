@@ -23,5 +23,5 @@ zig:
     library_package: 
     library_link: |4
         const ziglua = @import("libs/${lib_name}/build.zig");
-        ziglua.link(builder, executable);
+        _ = ziglua.linkAndPackage(builder, executable, .{});
 
