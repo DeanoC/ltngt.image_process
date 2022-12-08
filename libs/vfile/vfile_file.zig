@@ -3,13 +3,11 @@ const warn = std.log.warn;
 const assert = std.debug.assert;
 const VFile = @import("vfile.zig").VFile;
 const VFileError = @import("vfile.zig").VFileError;
-const File = std.fs.File;
-const Dir = std.fs.Dir;
 
-pub const VFileFile = struct {
+pub const File = struct {
     const FileType = VFile.makeFileType("FILE");
 
-    file: File,
+    file: std.fs.File,
     vfile: VFile,
 
     const Self = @This();
@@ -29,22 +27,27 @@ pub const VFileFile = struct {
             .endOfFileFn = endOfFileFn,
         };
     }
-    pub fn initFromFile(file: File) anyerror!VFileFile {
-        return VFileFile{
+
+    pub fn asInterface(self: *Self) *VFile {
+        return &self.vfile;
+    }
+
+    pub fn initFromFile(file: File) anyerror!File {
+        return File{
             .file = file,
             .vfile = setUpFunctionTable(),
         };
     }
 
-    pub fn initFromPath(dir: Dir, path: []const u8, flags: File.OpenFlags) anyerror!VFileFile {
-        return VFileFile{
+    pub fn initFromPath(dir: std.fs.Dir, path: []const u8, flags: std.fs.File.OpenFlags) anyerror!File {
+        return File{
             .file = try dir.openFile(path, flags),
             .vfile = setUpFunctionTable(),
         };
     }
 
-    pub fn create(dir: Dir, path: []const u8, flags: File.CreateFlags) anyerror!VFileFile {
-        return VFileFile{
+    pub fn create(dir: std.fs.Dir, path: []const u8, flags: std.fs.File.CreateFlags) anyerror!File {
+        return File{
             .file = try dir.createFile(path, flags),
             .vfile = setUpFunctionTable(),
         };
@@ -52,92 +55,92 @@ pub const VFileFile = struct {
 
     fn closeFn(vfile: *VFile) void {
         assert(vfile.fileType == FileType);
-        const self = @fieldParentPtr(VFileFile, "vfile", vfile);
+        const self = @fieldParentPtr(File, "vfile", vfile);
         close(self);
     }
     pub fn close(self: *Self) void {
-        File.close(self.file);
+        std.fs.File.close(self.file);
     }
 
     fn flushFn(vfile: *VFile) anyerror!void {
         assert(vfile.fileType == FileType);
-        const self = @fieldParentPtr(VFileFile, "vfile", vfile);
+        const self = @fieldParentPtr(File, "vfile", vfile);
         try flush(self);
     }
     pub fn flush(self: *Self) anyerror!void {
-        try File.sync(self.file);
+        try std.fs.File.sync(self.file);
     }
 
     fn readFn(vfile: *VFile, buffer: []u8) anyerror!usize {
         assert(vfile.fileType == FileType);
-        const self = @fieldParentPtr(VFileFile, "vfile", vfile);
+        const self = @fieldParentPtr(File, "vfile", vfile);
         return try read(self, buffer);
     }
     pub fn read(self: *Self, buffer: []u8) anyerror!usize {
-        return File.read(self.file, buffer) catch return VFileError.ReadError;
+        return std.fs.File.read(self.file, buffer) catch return VFileError.ReadError;
     }
 
     fn writeFn(vfile: *VFile, buffer: []const u8) anyerror!usize {
         assert(vfile.fileType == FileType);
-        const self = @fieldParentPtr(VFileFile, "vfile", vfile);
+        const self = @fieldParentPtr(File, "vfile", vfile);
         return try write(self, buffer);
     }
     pub fn write(self: *Self, buffer: []const u8) anyerror!usize {
-        return File.write(self.file, buffer) catch return VFileError.WriteError;
+        return std.fs.File.write(self.file, buffer) catch return VFileError.WriteError;
     }
 
     fn seekFromStartFn(vfile: *VFile, offset: u64) anyerror!void {
         assert(vfile.fileType == FileType);
-        const self = @fieldParentPtr(VFileFile, "vfile", vfile);
+        const self = @fieldParentPtr(File, "vfile", vfile);
         try seekFromStart(self, offset);
     }
     pub fn seekFromStart(self: *Self, offset: u64) anyerror!void {
-        File.seekTo(self.file, offset) catch return VFileError.SeekError;
+        std.fs.File.seekTo(self.file, offset) catch return VFileError.SeekError;
     }
 
     fn seekFromCurrentFn(vfile: *VFile, offset: i64) anyerror!void {
         assert(vfile.fileType == FileType);
-        const self = @fieldParentPtr(VFileFile, "vfile", vfile);
+        const self = @fieldParentPtr(File, "vfile", vfile);
         try seekFromCurrent(self, offset);
     }
     pub fn seekFromCurrent(self: *Self, offset: i64) anyerror!void {
-        File.seekBy(self.file, offset) catch return VFileError.SeekError;
+        std.fs.File.seekBy(self.file, offset) catch return VFileError.SeekError;
     }
 
     fn seekFromEndFn(vfile: *VFile, offset: i64) anyerror!void {
         assert(vfile.fileType == FileType);
-        const self = @fieldParentPtr(VFileFile, "vfile", vfile);
+        const self = @fieldParentPtr(File, "vfile", vfile);
         try seekFromEnd(self, offset);
     }
     pub fn seekFromEnd(self: *Self, offset: i64) anyerror!void {
-        File.seekFromEnd(self.file, offset) catch return VFileError.SeekError;
+        std.fs.File.seekFromEnd(self.file, offset) catch return VFileError.SeekError;
     }
 
     fn tellFn(vfile: *VFile) anyerror!usize {
         assert(vfile.fileType == FileType);
-        const self = @fieldParentPtr(VFileFile, "vfile", vfile);
+        const self = @fieldParentPtr(File, "vfile", vfile);
         return try tell(self);
     }
     pub fn tell(self: *Self) anyerror!usize {
-        return File.getPos(self.file);
+        return std.fs.File.getPos(self.file);
     }
 
     fn byteCountFn(vfile: *VFile) anyerror!usize {
         assert(vfile.fileType == FileType);
-        const self = @fieldParentPtr(VFileFile, "vfile", vfile);
+        const self = @fieldParentPtr(File, "vfile", vfile);
         return try byteCount(self);
     }
     pub fn byteCount(self: *Self) anyerror!usize {
-        return File.getEndPos(self.file);
+        return std.fs.File.getEndPos(self.file);
     }
 
     fn endOfFileFn(vfile: *VFile) anyerror!bool {
         assert(vfile.fileType == FileType);
-        const self = @fieldParentPtr(VFileFile, "vfile", vfile);
+        const self = @fieldParentPtr(File, "vfile", vfile);
         return try endOfFile(self);
     }
     pub fn endOfFile(self: *Self) anyerror!bool {
-        return try File.getEndPos(self.file) == try File.getPos(self.file);
+        return try std.fs.File.getEndPos(self.file) == try std.fs.File.getPos(self.file);
     }
 };
 
@@ -154,20 +157,20 @@ var fancy_array = init: {
 };
 
 test "initFromFile" {
-    const tmp_test = try std.fs.cwd().createFile("tmp/test.txt", File.CreateFlags{
+    const tmp_test = try std.fs.cwd().createFile("tmp/test.txt", std.fs.File.CreateFlags{
         .read = true,
         .truncate = true,
     });
     _ = try tmp_test.write(&fancy_array);
 
-    var vfile_file = try VFileFile.initFromFile(tmp_test);
+    var vfile_file = try File.initFromFile(tmp_test);
     var v = &vfile_file.vfile;
     try expectEqual(try v.byteCount(), 10);
     v.close();
 }
 
 test "create" {
-    var vfile_file = try VFileFile.create(std.fs.cwd(), "tmp/test2.txt", File.CreateFlags{
+    var vfile_file = try File.create(std.fs.cwd(), "tmp/test2.txt", std.fs.File.CreateFlags{
         .read = true,
         .truncate = true,
     });
@@ -180,7 +183,7 @@ test "create" {
 test "initFromPath" {
     // make sure its created so we can check the initFromPath
     {
-        var vfile_file = try VFileFile.create(std.fs.cwd(), "tmp/test2.txt", File.CreateFlags{
+        var vfile_file = try File.create(std.fs.cwd(), "tmp/test2.txt", std.fs.File.CreateFlags{
             .read = true,
             .truncate = true,
         });
@@ -190,7 +193,7 @@ test "initFromPath" {
         try expectEqual(try v.byteCount(), 10);
     }
 
-    var vfile_file = try VFileFile.initFromPath(std.fs.cwd(), "tmp/test2.txt", File.OpenFlags{});
+    var vfile_file = try File.initFromPath(std.fs.cwd(), "tmp/test2.txt", std.fs.File.OpenFlags{});
     var v = &vfile_file.vfile;
     defer v.close();
     try v.seekFromStart(0);
