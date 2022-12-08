@@ -1,0 +1,2 @@
+#!/bin/bash
+bin/zig build --cache-dir tmp/zig-cache --prefix out --color on -freference-trace

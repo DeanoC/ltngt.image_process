@@ -1,0 +1,3 @@
+#!/bin/bash
+bin/zig build --cache-dir tmp/zig-cache --prefix out --color on
+bin/zig test $1

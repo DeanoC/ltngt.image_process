@@ -1,0 +1,21 @@
+name: image_process
+
+boards: 
+ - host
+
+cpus:
+ - host
+
+builder: 
+ - zig
+
+# libraries to be linked into this peice of software
+libraries:
+ - tiny_image_format
+ - vfile
+ - image
+
+# non library dependencies (like host programs, asset processing etc.)
+dependencies: []
+
+actions: []
