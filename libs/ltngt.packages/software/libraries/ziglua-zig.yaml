@@ -19,9 +19,9 @@ actions:
  - fetch git git@github.com:natecraddock/ziglua.git master
 
 zig:
-    library_import: libs/${lib_name}/src/lib.zig
+    library_import: libs/${lib_name}/src/ziglua-5.1/lib.zig
     library_package: 
     library_link: |4
         const ziglua = @import("libs/${lib_name}/build.zig");
-        _ = ziglua.linkAndPackage(builder, executable, .{});
+        _ = ziglua.linkAndPackage(builder, executable, .{.version = ziglua.LuaVersion.lua_51});
 
