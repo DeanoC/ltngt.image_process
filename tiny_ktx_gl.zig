@@ -412,7 +412,6 @@ pub fn From(fmt: tif.Format) ?Format {
 }
 
 pub fn FromGl(fmt: Format) tif.Format {
-    std.log.warn("{any}", .{fmt});
     switch (fmt.intformat) {
         .RGB_S3TC_DXT1 => return .DXBC1_RGB_UNORM,
         .RGBA_S3TC_DXT1 => return .DXBC1_RGBA_UNORM,
