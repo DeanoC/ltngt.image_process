@@ -1,0 +1,24 @@
+name: sokol_zgui_backend
+
+boards: 
+ - host
+
+cpus:
+ - host
+
+builder: 
+ - zig
+
+# libraries to be linked into this peice of software
+libraries: 
+ - zig_gamedev_zgui
+ - sokol
+
+# non library dependencies (like host programs, asset processing etc.)
+dependencies: [] 
+
+actions:
+ - fetch git git@github.com:DeanoC/ltngt.sokol_zgui_backend.git main
+
+zig:
+

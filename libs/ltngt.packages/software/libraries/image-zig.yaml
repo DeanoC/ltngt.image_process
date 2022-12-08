@@ -1,0 +1,29 @@
+name: image
+
+boards: 
+ - host
+
+cpus:
+ - host
+
+builder: 
+ - zig
+
+# libraries to be linked into this peice of software
+libraries: 
+ - tiny_image_format
+ - vfile
+ - zig_string
+ 
+# non library dependencies (like programs, asset processing etc.)
+dependencies: [] 
+
+actions:
+ - fetch git git@github.com:DeanoC/ltngt.image.git main
+
+zig:
+  library_import: libs/${lib_name}/package.zig
+  library_package: 
+  library_link: |4
+        const image = @import("libs/${lib_name}/build.zig");
+        image.link(executable);

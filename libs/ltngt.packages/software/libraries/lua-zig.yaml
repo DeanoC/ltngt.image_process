@@ -1,0 +1,28 @@
+name: lua
+
+boards: 
+ - host
+
+cpus:
+ - host
+
+builder: 
+ - zig
+
+# libraries to be linked into this peice of software
+libraries: 
+ - tiny_image_format
+
+# non library dependencies (like programs, asset processing etc.)
+dependencies: [] 
+
+actions:
+ - fetch git git@github.com:DeanoC/zoltan.git main
+
+zig:
+    library_import: libs/${lib_name}/src/lua.zig
+    library_package: 
+    library_link: |4
+        const luaLib = @import("libs/${lib_name}/build.zig");
+        luaLib.addLuaLibrary(executable,"libs/${lib_name}");
+
